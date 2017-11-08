@@ -34,9 +34,9 @@ public extension String {
        - regex: Regex to split the string with
      - returns: An array. See Regex.split for more details.
      */
-    public func split(using regex:RegexProtocol?) -> [String] {
+    public func split(using regex:RegexProtocol?) -> [Substring] {
         guard let regex = regex else {
-            return [self]
+            return [self[self.startIndex...]]
         }
         return regex.split(self)
     }

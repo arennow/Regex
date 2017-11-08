@@ -17,6 +17,12 @@
 import XCTest
 import Regex
 
+extension String {
+	var substring: Substring {
+		return self[self.startIndex...]
+	}
+}
+
 class RegexTests: XCTestCase {
     static let pattern:String = "(.+?)([1,2,3]*)(.*)"
     let regex:RegexProtocol = try! Regex(pattern:RegexTests.pattern, groupNames:"letter", "digits", "rest")
@@ -59,14 +65,14 @@ class RegexTests: XCTestCase {
     }
     
     func testSimple() {
-        XCTAssertEqual(RegexTests.pattern.r?.findFirst(in: source)?.group(at: 2), digits)
+        XCTAssertEqual(RegexTests.pattern.r?.findFirst(in: source)?.group(at: 2), digits.substring)
     }
     
     func _test(group name:String, reference:String) {
         let matches = regex.findAll(in: source)
         for match in matches {
             let value = match.group(named: name)
-            XCTAssertEqual(value, reference)
+            XCTAssertEqual(value, reference.substring)
         }
     }
     
@@ -86,17 +92,17 @@ class RegexTests: XCTestCase {
         let match = regex.findFirst(in: source)
         XCTAssertNotNil(match)
         if let match = match {
-            XCTAssertEqual(letter, match.group(named: "letter"))
-            XCTAssertEqual(digits, match.group(named: "digits"))
-            XCTAssertEqual(rest, match.group(named: "rest"))
+            XCTAssertEqual(letter.substring, match.group(named: "letter"))
+            XCTAssertEqual(digits.substring, match.group(named: "digits"))
+            XCTAssertEqual(rest.substring, match.group(named: "rest"))
             
-            XCTAssertEqual(source, match.matched)
+            XCTAssertEqual(source.substring, match.matched)
             
             let subgroups = match.subgroups
             
-            XCTAssertEqual(letter, subgroups[0])
-            XCTAssertEqual(digits, subgroups[1])
-            XCTAssertEqual(rest, subgroups[2])
+            XCTAssertEqual(letter.substring, subgroups[0])
+            XCTAssertEqual(digits.substring, subgroups[1])
+            XCTAssertEqual(rest.substring, subgroups[2])
         } else {
             XCTFail("Bad test, can not reach this path")
         }
@@ -138,12 +144,12 @@ class RegexTests: XCTestCase {
     func testSplit() {
         let re = namesSplitPattern.r!
         let nameList = re.split(names)
-        XCTAssertEqual(nameList, splitNames)
+		XCTAssertEqual(nameList, splitNames.map { $0.substring })
     }
     
     func testSplitOnString() {
         let nameList = names.split(using: namesSplitPattern.r)
-        XCTAssertEqual(nameList, splitNames)
+        XCTAssertEqual(nameList, splitNames.map { $0.substring })
     }
     
     func testSplitWithSubgroups() {

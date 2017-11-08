@@ -27,11 +27,11 @@ protocol MatchProtocol {
     func range(at index:Int) -> StringRange?
     func range(named name:String) -> StringRange?
     
-    var matched:String {get}
-    var subgroups:[String?] {get}
+    var matched:Substring {get}
+    var subgroups:[Substring?] {get}
     
-    func group(at index:Int) -> String?
-    func group(named name:String) -> String?
+    func group(at index:Int) -> Substring?
+    func group(named name:String) -> Substring?
 }
 
 /**
@@ -109,7 +109,7 @@ public class Match : MatchProtocol {
     /**
      * The whole matched substring.
      */
-    public var matched:String {
+    public var matched:Substring {
         get {
             //zero group is always there, otherwise there is no match
             return group(at: 0)!
@@ -119,13 +119,13 @@ public class Match : MatchProtocol {
     /**
      * Matched subgroups' substrings.
      */
-    public var subgroups:[String?] {
+    public var subgroups:[Substring?] {
         get {
             
             let subRanges = ranges.suffix(from: 1)
             return subRanges.map { range in
                 range.map { range in
-                    source.substring(with: range)
+                    source[range]
                 }
             }
         }
@@ -137,10 +137,10 @@ public class Match : MatchProtocol {
      - parameter name: Index of subgroup to match to. Zero represents the whole match.
      - returns: A substring or nil if the supplied subgroup does not exist.
      */
-    public func group(at index:Int) -> String? {
+    public func group(at index:Int) -> Substring? {
         let range = self.range(at: index)
         return range.map { range in
-            source.substring(with: range)
+            source[range]
         }
     }
     
@@ -150,7 +150,7 @@ public class Match : MatchProtocol {
      - parameter name: Index of subgroup to match to.
      - returns: A substring or nil if the supplied subgroup does not exist.
      */
-    public func group(named name:String) -> String? {
+    public func group(named name:String) -> Substring? {
         return self.group(at: index(of: name))
     }
 }
